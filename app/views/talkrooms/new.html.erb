@@ -1,0 +1,8 @@
+
+<p><%= @account.name %>: <%= @account.comment %><p/>
+
+<p>友だちリクエストを送信しますか？</p>
+
+<%= link_to '送信', "/talkrooms/#{@account.id}/create" %>
+
+<%= link_to 'キャンセル', '/users' %>

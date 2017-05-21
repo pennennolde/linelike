@@ -1,0 +1,98 @@
+
+<% if user_signed_in? %>
+
+  <!-- 友だちリクエスト -->
+	<% if @requests.length > 0 %>
+		<div class="panel panel-default">
+  			<div class="panel-heading">友だちリクエスト <span class="badge"><%= @requests.length %></span></div>
+  			<ul class="list-group">
+    			<% @requests.each do |request| %>
+    				<li class="list-group-item">
+    					<%= request.requester.name %>さんから友だちリクエストが届いています。　
+    					<%= link_to "talkrooms/#{request.id}/edit" do %>
+  							<button type="button" class="btn btn-default navbar-btn">
+  								友だちになる
+  							</button>
+  						<% end %>
+    				</li>
+  				<% end %>
+  			</ul>
+		</div>
+	<% end %>
+
+
+  <!-- 友だち -->
+	<div class="panel panel-default">
+  		<div class="panel-heading">友だち: <%= @friend_rooms.length %></div>
+
+  		<% if @friend_rooms.length > 0 %>
+  			<ul class="list-group">
+    			<% @friend_rooms.each do |room| %>
+      				<li class="list-group-item">
+        				<% if room.requester.id==current_user.id %>
+          					<%= room.accepter.name %>: <%= room.accepter.comment %>
+        				<% else %>
+         					<%= room.requester.name %>: <%= room.requester.comment %>
+        				<% end %>
+
+        				<% if room.messages.length > 0 %>
+       						<span> (<%= room.messages.maximum(:created_at).strftime("%Y/%m/%d") %>) </span>
+        				<% end %>
+
+        				<% if room.messages.where(receiver: current_user.id, read: false).length > 0 %>
+        					<%= link_to "talkrooms/#{room.id}/index" do %>
+       							<button class="btn btn-primary" type="button">Messages <span class="badge"><%= room.messages.where(receiver: current_user.id, read: false).length %></span></button>
+     						  <% end %>
+        				<% else %>
+          					<%= link_to "talkrooms/#{room.id}/index" do %>
+          						<button type="button" class="btn btn-default btn-lg"> <span class="glyphicon glyphicon-log-in" aria-hidden="true"> </span> </button>
+          					<% end %>
+          				<% end %>
+
+      				</li>
+      			<% end %>
+  			</ul>
+  		<% end %>
+	</div>
+
+
+  <!-- 友だち検索 -->
+	<%= search_form_for @q do |f| %>
+  		<%= f.label :name_cont, '友達を探す' %>
+  		<%= f.search_field :name_cont %>
+    	<%= f.submit '検索する' %>
+	<% end %>
+
+
+  <!-- 検索結果 -->
+	<% if @accounts %>
+		<p>検索結果: <%= @accounts.length %>件</p>
+		<% @accounts.each do |account| %>
+			<p>
+				・
+				<%= account.name %>: <%= account.comment %>
+
+				<% if account.requester_talkrooms.where(accepter_id: current_user.id, accepted: true).length == 1 || account.accepter_talkrooms.where(requester_id: current_user.id, accepted: true).length == 1 %>
+					[友達です]
+				<% elsif account.requester_talkrooms.where(accepter_id: current_user.id, accepted: false).length == 1 %>
+					[<%= account.name %>から友達リクエストが届いています]
+				<% elsif account.accepter_talkrooms.where(requester_id: current_user.id, accepted: false).length == 1 %>
+					[<%= account.name %>に友達リクエストしています]
+				<% elsif account!=current_user %>
+					<%= link_to '友達リクエストを送る', "talkrooms/#{account.id}/new" %>
+				<% else %>
+					[あなたです]
+				<% end %>
+			</p>
+		<% end %>
+	<% end %>
+
+
+
+
+	
+<% else %>
+
+	<%= link_to 'ログイン', new_user_session_path, method: :get %><br>
+	<%= link_to '新規登録', new_user_registration_path, method: :get %>
+<% end %>

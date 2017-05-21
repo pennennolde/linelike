@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LINE LIKE</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet" />
+</head>
+<body>
+
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <%= link_to '/users', class: "navbar-brand" do %>
+               LINE LIKE
+      <% end %>
+    </div>
+
+
+    <% if user_signed_in? %>
+
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-text navbar-right">
+          <li> Signed in as </li>
+          <li class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <%= current_user.name %> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+              <li>
+                <span>  comment: <%= current_user.comment %>  </span>
+              </li>
+              <li role="separator" class="divider"></li>
+              <li>
+                <%= link_to edit_user_registration_path do %>
+                  アカウント編集
+                <% end %>
+              </li>
+              <li role="separator" class="divider"></li>
+              <li>
+                <%= link_to destroy_user_session_path, method: :delete do %>
+                  ログアウト
+                <% end %>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+    <% end %>
+
+  </div>
+</nav>
+
+
+
+<%= yield %>
+
+
+</body>
+</html>

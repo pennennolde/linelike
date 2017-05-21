@@ -1,0 +1,37 @@
+
+<h1>トークルーム with <%= @friend.name %></h1>
+
+<% if @room.messages.length > 0 %>
+	<% date = '' %>
+	<% @room.messages.each do |message| %>
+
+		<% if date != message.created_at.strftime("%Y年%m月%d日(%a)") %>
+			<% date = message.created_at.strftime("%Y年%m月%d日(%a)") %>
+			<p><< <%= date %> >></p>
+		<% end %>
+
+		<% if message.sender_id==@friend.id %>
+			<div class="alert alert-info" role="alert"> 
+				<span class="label label-info"> <%= message.sender.name %></span> <%= message.message %> 
+				(<%= message.created_at.hour %>:<%= message.created_at.strftime("%M") %>)
+			</div>
+
+		<% else %>
+			<div class="alert alert-warning" role="alert"> 
+				<% if message.read==true%>
+					（既読）
+				<% end %>
+				(<%= message.created_at.hour %>:<%= message.created_at.strftime("%M") %>)
+				<%= message.message %> 
+				<span class="label label-warning"> <%= message.sender.name %></span>
+			</div>
+		<% end %>
+		
+	<% end %>
+<% end %>
+
+
+<%= form_tag("/messages/#{@room.id}/create", method: :post) do %>
+    <input type="text" name="message">
+    <input type="submit" value="送信">
+<% end %>

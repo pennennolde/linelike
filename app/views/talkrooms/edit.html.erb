@@ -1,0 +1,6 @@
+
+<p><%= @request_room.requester.name %>さんと友だちになりますか？<p/>
+
+<%= link_to '友だちになる', "/talkrooms/#{@request_room.id}/update" %>
+
+<%= link_to 'もどる', '/users' %>
